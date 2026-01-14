@@ -11,8 +11,7 @@ import seaborn as sns
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="AI News Verifier", page_icon="⚖️", layout="wide")
 
-# Initialize NewsAPI (Replace with your own key)
-# Get a free key at: https://newsapi.org/
+# Initialize NewsAPI
 newsapi = NewsApiClient(api_key='6e868cef15364ffcb96079847a7794a1')
 
 
@@ -39,10 +38,8 @@ st.sidebar.write(f"**Accuracy:** {acc * 100:.2f}%")
 if st.sidebar.checkbox("Show Confusion Heatmap"):
     st.sidebar.write("Confusion Matrix (Seaborn):")
     cm = confusion_matrix(y_test, y_pred, labels=['FAKE', 'REAL'])
-
-    # Create Seaborn Heatmap
     fig, ax = plt.subplots(figsize=(5, 4))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='YlGnBu', ax=ax,  # Yellow-Green-Blue palette
+    sns.heatmap(cm, annot=True, fmt='d', cmap='YlGnBu', ax=ax,
                 xticklabels=['Predicted FAKE', 'Predicted REAL'],
                 yticklabels=['Actual FAKE', 'Actual REAL'])
     plt.title("Model Error Analysis")
@@ -50,18 +47,38 @@ if st.sidebar.checkbox("Show Confusion Heatmap"):
 
 # --- STEP 3: MAIN INTERFACE ---
 st.title("🕵️‍♂️ Fake News Pro: API & Analytics")
-tab1, tab2 = st.tabs(["Manual Verification", "Live API News"])
+tab1, tab2 = st.tabs(["Upload CSV Verification", "Live API News"])
 
 with tab1:
-    user_input = st.text_area("Analyze specific text:", height=200)
-    if st.button("Analyze Now"):
-        if user_input:
-            data = tfidf_vectorizer.transform([user_input])
-            res = pac.predict(data)[0]
-            if res == 'REAL':
-                st.success(f"Result: {res}")
-            else:
-                st.error(f"Result: {res}")
+    st.subheader("Check Multiple News via CSV")
+    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+
+    if uploaded_file is not None:
+        user_df = pd.read_csv(uploaded_file)
+
+        # Check if 'text' column exists in uploaded file
+        if 'text' in user_df.columns:
+            if st.button("Analyze Uploaded File"):
+                # Transform and Predict
+                tfidf_test = tfidf_vectorizer.transform(user_df['text'].fillna(''))
+                predictions = pac.predict(tfidf_test)
+
+                # Add predictions to dataframe
+                user_df['AI_Verdict'] = predictions
+
+                # Display Summary
+                fake_count = (predictions == 'FAKE').sum()
+                real_count = (predictions == 'REAL').sum()
+
+                c1, c2 = st.columns(2)
+                c1.metric("Fake News Detected", fake_count)
+                c2.metric("Real News Detected", real_count)
+
+                # Show results table
+                st.write("### Prediction Results")
+                st.dataframe(user_df[['text', 'AI_Verdict']], use_container_width=True)
+        else:
+            st.error("The uploaded CSV must have a column named **'text'** to perform analysis.")
 
 with tab2:
     st.subheader("Global Live Headlines")
