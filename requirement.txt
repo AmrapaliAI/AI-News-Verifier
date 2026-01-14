@@ -1,0 +1,7 @@
+streamlit
+pandas
+newsapi-python
+scikit-learn
+matplotlib
+seaborn
+python-docx
