@@ -13,8 +13,8 @@ import numpy as np
 
 # --- PAGE CONFIG ---
 st.set_page_config(
-    page_title="AI News Batch Analyzer",
-    page_icon="📊",
+    page_title="AI News Verifier",
+    page_icon="&#128373;",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -52,21 +52,27 @@ st.markdown("""
         margin-bottom: 2rem;
     }
     .stButton>button {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 30px;
-        padding: 1rem 3rem;
-        font-size: 1.2rem;
-        font-weight: 700;
-        border: none;
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-        transition: all 0.3s ease;
-        width: 100%;
-    }
-    .stButton>button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(102, 126, 234, 0.6);
-    }
+    position: relative;
+    overflow: hidden;
+    /* ... existing styles ... */
+}
+
+.stButton>button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(30deg);
+    transition: all 0.6s ease;
+}
+
+.stButton>button:hover::after {
+    left: 120%;
+}
+    
     .upload-box {
         background: linear-gradient(135deg, #f5f7fa 0%, #e3e7f1 100%);
         border: 3px dashed #667eea;
@@ -96,7 +102,41 @@ st.markdown("""
         border-radius: 15px;
         border-left: 5px solid #3b82f6;
         margin: 1rem 0;
-    }
+    }/* ===== Success Box (Luxury Notification) ===== */
+.success-box {
+    background: rgba(16, 185, 129, 0.1); /* Subtle emerald tint */
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399 !important; /* Bright emerald text */
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    text-align: center;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 0 10px rgba(16, 185, 129, 0.1);
+    backdrop-filter: blur(8px);
+    margin: 10px 0;
+    animation: slideInRight 0.5s ease-out, pulse-border 3s infinite;
+}
+
+/* Subtle border pulse animation */
+@keyframes pulse-border {
+    0% { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+    50% { border-color: rgba(16, 185, 129, 0.8); box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+    100% { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); }
+}
+
+/* Entrance animation */
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.success-box strong {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
+    font-weight: 800;
+}
     </style>
 """, unsafe_allow_html=True)
 
@@ -146,7 +186,7 @@ def load_or_train_model(uploaded_df=None):
 
 
 # --- MAIN APP ---
-st.title("📊 AI News Batch Analyzer")
+st.title("&#128373; AI News Verifier")
 st.markdown(
     "<p class='subtitle'>Upload CSV files for intelligent fake news detection with beautiful visualizations</p>",
     unsafe_allow_html=True)
@@ -155,6 +195,27 @@ st.markdown(
 st.sidebar.header("🎓 Train Model")
 st.sidebar.markdown("Upload your training dataset to create or update the AI model")
 
+st.sidebar.markdown(f"""
+    <div style="
+        background: rgba(255, 255, 255, 0.04);
+        border-left: 3px solid var(--neon-blue);
+        padding: 15px;
+        border-radius: 12px;
+        margin: 10px 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    ">
+        <p style="
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+            font-weight: 400;
+        ">
+            <span style="color: var(--neon-blue); font-weight: bold;">Step 1:</span> 
+            Upload your training dataset to create or update the AI model.
+        </p>
+    </div>
+""", unsafe_allow_html=True)
 uploaded_file = st.sidebar.file_uploader("📂 Upload Training CSV", type=['csv'],
                                          help="CSV must have 'text' and 'label' columns")
 
@@ -439,13 +500,225 @@ else:
 # --- FOOTER ---
 st.markdown("---")
 st.markdown("""
-<div style='text-align: center; padding: 2rem;'>
-    <h3 style='background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-               -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-               margin-bottom: 0.5rem;'>AI News Batch Analyzer</h3>
-    <p style='color: #64748b;'>Powered by Machine Learning & Advanced Analytics</p>
-    <p style='color: #94a3b8; font-size: 0.9rem;'>
-        Upload • Analyze • Download • Repeat
-    </p>
-</div>
+<style>
+
+/* ===== Root Theme Variables ===== */
+:root {
+    --bg-main: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    --glass-bg: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --neon-blue: #38bdf8;
+    --neon-purple: #a855f7;
+    --neon-pink: #ec4899;
+    --gold: #facc15;
+}
+
+/* ===== App Background (Aurora Effect) ===== */
+.stApp {
+    background: var(--bg-main);
+    background-attachment: fixed;
+    color: #f8fafc;
+    animation: aurora 15s ease infinite;
+}
+
+@keyframes aurora {
+    0% {filter: hue-rotate(0deg);}
+    50% {filter: hue-rotate(25deg);}
+    100% {filter: hue-rotate(0deg);}
+}
+
+/* ===== Main Container Glass ===== */
+.main {
+    backdrop-filter: blur(18px) saturate(180%);
+    background: var(--glass-bg);
+    border-radius: 28px;
+    padding: 2.5rem;
+    margin: 1.5rem;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+}
+
+/* ===== Headings (Luxury Neon) ===== */
+/* Update your h1 with this shimmer effect */
+h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    text-align: center;
+    background: linear-gradient(
+        to right, 
+        #38bdf8 20%, 
+        #ec4899 40%, 
+        #facc15 60%, 
+        #38bdf8 80%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 4s linear infinite;
+}
+
+@keyframes shine {
+    to { background-position: 200% center; }
+}/* ===== Ultra-Stylish Sidebar Header ===== */
+[data-testid="stSidebar"] h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.05em !important;
+    background: linear-gradient(135deg, #ffffff 30%, var(--neon-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: 1rem 0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1.5rem !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Adding a glowing pulse dot next to the text */
+[data-testid="stSidebar"] h2::before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: var(--neon-pink);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--neon-pink);
+    margin-right: 12px;
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+}
+
+h2, h3 {
+    color: var(--gold);
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(250,204,21,0.6);
+}
+
+/* ===== Buttons (3D Neon Pulse) ===== */
+.stButton>button {
+    background: linear-gradient(120deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+    background-size: 300% 300%;
+    animation: gradientMove 5s ease infinite;
+    color: white;
+    border-radius: 999px;
+    padding: 1rem 3rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    border: none;
+    box-shadow: 0 10px 30px rgba(168,85,247,0.5);
+    transition: all 0.35s ease;
+}
+
+.stButton>button:hover {
+    transform: translateY(-4px) scale(1.06);
+    box-shadow: 0 20px 50px rgba(236,72,153,0.8);
+}
+
+@keyframes gradientMove {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* ===== Inputs (Frosted Neon) ===== */
+input, textarea, .stTextInput>div>div>input {
+    background: rgba(255,255,255,0.08) !important;
+    color: white !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(56,189,248,0.4) !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--neon-purple) !important;
+    box-shadow: 0 0 15px var(--neon-purple);
+}
+
+/* ===== Upload Box (Hover Glow) ===== */
+.upload-box {
+    background: rgba(255,255,255,0.08);
+    border: 2px dashed var(--neon-blue);
+    border-radius: 24px;
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: 0 0 25px rgba(56,189,248,0.6);
+    transition: all 0.35s ease;
+}
+
+.upload-box:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 0 40px rgba(168,85,247,0.8);
+}
+
+/* ===== Metric Cards (Floating Glass) ===== */
+/* Replace or augment your .metric-card */
+.metric-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: border 0.3s ease;
+}
+
+.metric-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+        transparent, 
+        var(--neon-blue), 
+        transparent 30%
+    );
+    animation: rotate-border 6s linear infinite;
+    z-index: -1;
+}
+
+@keyframes rotate-border {
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes float {
+    0% {transform: translateY(0px);}
+    50% {transform: translateY(-6px);}
+    100% {transform: translateY(0px);}
+}
+
+/* ===== Sidebar Luxury ===== */
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, rgba(15,12,41,0.95), rgba(48,43,99,0.95));
+    border-right: 1px solid rgba(255,255,255,0.15);
+}
+
+/* ===== Scrollbar Styling ===== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--neon-purple), var(--neon-pink));
+    border-radius: 10px;
+}
+
+/* ===== Fade-in Animation ===== */
+.fade-in {
+    animation: fadeIn 1.2s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+
+</style>
 """, unsafe_allow_html=True)
