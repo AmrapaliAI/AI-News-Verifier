@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- CUSTOM CSS FOR STYLING ---
+# --- CUSTOM CSS ---
 st.markdown("""
 <style>
 :root {
@@ -31,132 +31,9 @@ st.markdown("""
     --neon-pink: #ec4899;
     --gold: #facc15;
 }
-
-/* Background */
-.stApp {
-    background: var(--bg-main);
-    background-attachment: fixed;
-    color: #f8fafc;
-    animation: aurora 15s ease infinite;
-}
-@keyframes aurora {
-    0% {filter: hue-rotate(0deg);}
-    50% {filter: hue-rotate(25deg);}
-    100% {filter: hue-rotate(0deg);}
-}
-
-/* Main container */
-.main {
-    backdrop-filter: blur(18px) saturate(180%);
-    background: var(--glass-bg);
-    border-radius: 28px;
-    padding: 2.5rem;
-    margin: 1.5rem;
-    border: 1px solid var(--glass-border);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-}
-
-/* Headings */
-h1 {
-    font-size: 4rem;
-    font-weight: 900;
-    text-align: center;
-    background: linear-gradient(to right, #38bdf8, #ec4899, #facc15, #38bdf8);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shine 4s linear infinite;
-}
-@keyframes shine {
-    to { background-position: 200% center; }
-}
-h2, h3 {
-    color: var(--gold);
-    font-weight: 800;
-    text-shadow: 0 0 8px rgba(250,204,21,0.6);
-}
-
-/* Sidebar header */
-[data-testid="stSidebar"] h2 {
-    font-size: 1.8rem !important;
-    font-weight: 800 !important;
-    background: linear-gradient(135deg, #ffffff 30%, var(--neon-blue));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    padding: 1rem 0;
-    border-bottom: 2px solid rgba(255,255,255,0.1);
-}
-[data-testid="stSidebar"] h2::before {
-    content: "";
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    background-color: var(--neon-pink);
-    border-radius: 50%;
-    box-shadow: 0 0 15px var(--neon-pink);
-    margin-right: 12px;
-    animation: pulse-glow 2s infinite;
-}
-@keyframes pulse-glow {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(236,72,153,0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(236,72,153,0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(236,72,153,0); }
-}
-
-/* Buttons */
-.stButton>button {
-    background: linear-gradient(120deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
-    background-size: 300% 300%;
-    animation: gradientMove 5s ease infinite;
-    color: white;
-    border-radius: 999px;
-    padding: 1rem 3rem;
-    font-size: 1.25rem;
-    font-weight: 800;
-    border: none;
-    box-shadow: 0 10px 30px rgba(168,85,247,0.5);
-    transition: all 0.35s ease;
-}
-.stButton>button:hover {
-    transform: translateY(-4px) scale(1.06);
-    box-shadow: 0 20px 50px rgba(236,72,153,0.8);
-}
-@keyframes gradientMove {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-}
-
-/* Upload box */
-.upload-box {
-    background: rgba(255,255,255,0.08);
-    border: 2px dashed var(--neon-blue);
-    border-radius: 24px;
-    padding: 2.5rem;
-    text-align: center;
-    box-shadow: 0 0 25px rgba(56,189,248,0.6);
-    transition: all 0.35s ease;
-}
-.upload-box:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 0 40px rgba(168,85,247,0.8);
-}
-
-/* Metric cards */
-.metric-card {
-    position: relative;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 18px;
-    padding: 1.5rem;
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-.metric-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 12px 30px rgba(236,72,153,0.6);
-}
+.stApp { background: var(--bg-main); color: #f8fafc; }
+h1 { font-size: 3rem; font-weight: 900; text-align: center; }
+.metric-card { background: rgba(255,255,255,0.05); border-radius: 18px; padding: 1rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -205,7 +82,7 @@ def load_or_train_model(uploaded_df=None):
 
 # --- MAIN APP ---
 st.title("🕵️ AI News Verifier")
-st.markdown("<p class='subtitle'>Upload CSV files for intelligent fake news detection with beautiful visualizations</p>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Upload CSV files for intelligent fake news detection with visualizations</p>", unsafe_allow_html=True)
 
 # Sidebar
 st.sidebar.header("🎓 Train Model")
@@ -214,4 +91,73 @@ uploaded_file = st.sidebar.file_uploader("📂 Upload Training CSV", type=['csv'
 if uploaded_file is not None:
     uploaded_df = pd.read_csv(uploaded_file)
     if 'text' in uploaded_df.columns and 'label' in uploaded_df.columns:
-        st.sidebar.markdown(f"<div class='success-box'>✅ <strong>{len(uploaded_df)} rows</strong> loaded
+        st.sidebar.success(f"✅ {len(uploaded_df)} rows loaded successfully")
+        if st.sidebar.button("🚀 Train Model"):
+            with st.spinner("🔄 Training AI model..."):
+                tfidf_vectorizer, model, y_test, y_pred, acc, cm, trained_fresh = load_or_train_model(uploaded_df)
+                st.sidebar.success(f"✅ Model trained! Accuracy: {acc * 100:.2f}%")
+                st.rerun()
+    else:
+        st.sidebar.error("❌ CSV must have 'text' and 'label' columns")
+        uploaded_df = None
+else:
+    uploaded_df = None
+
+# Load model
+tfidf_vectorizer, model, y_test, y_pred, acc, cm, trained_fresh = load_or_train_model()
+if model is None:
+    st.error("⚠️ No model found. Please upload a training CSV file in the sidebar.")
+    st.stop()
+
+# --- Performance ---
+st.sidebar.header("📈 Model Performance")
+if trained_fresh and y_test is not None:
+    st.sidebar.metric("Accuracy", f"{acc*100:.2f}%")
+    if st.sidebar.checkbox("📊 Show Confusion Matrix", value=True):
+        fig, ax = plt.subplots(figsize=(6, 5))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='RdYlGn', ax=ax,
+                    xticklabels=['Predicted FAKE', 'Predicted REAL'],
+                    yticklabels=['Actual FAKE', 'Actual REAL'])
+        st.sidebar.pyplot(fig)
+
+# --- Batch Analysis ---
+st.header("📂 Batch Analysis")
+batch_file = st.file_uploader("📄 Upload CSV for Analysis (must have 'text' column)", type=['csv'])
+if batch_file is not None:
+    batch_df = pd.read_csv(batch_file)
+    if 'text' not in batch_df.columns:
+        st.error("❌ CSV must contain a 'text' column")
+    else:
+        st.success(f"✅ Loaded {len(batch_df)} articles for analysis")
+        if st.button("🚀 Analyze All Articles"):
+            predictions, fake_probabilities, real_probabilities = [], [], []
+            for text in batch_df['text']:
+                tfidf_test = tfidf_vectorizer.transform([str(text)])
+                pred = model.predict(tfidf_test)[0]
+                proba = model.predict_proba(tfidf_test)[0]
+                predictions.append(pred)
+                fake_probabilities.append(f"{proba[0]:.2%}")
+                real_probabilities.append(f"{proba[1]:.2%}")
+
+            batch_df['Prediction'] = predictions
+            batch_df['FAKE_Probability'] = fake_probabilities
+            batch_df['REAL_Probability'] = real_probabilities
+
+            st.success("✅ Analysis Complete!")
+
+            # Results table
+            def highlight_prediction(val):
+                if val == 'REAL':
+                    return 'background-color: #d1fae5; color: #065f46; font-weight: bold'
+                elif val == 'FAKE':
+                    return 'background-color: #fee2e2; color: #991b1b; font-weight: bold'
+                else:
+                    return ''
+            styled_df = batch_df.style.map(highlight_prediction, subset=['Prediction'])
+            st.dataframe(styled_df, width='stretch', height=500)
+
+            # Download results
+            csv = batch_df.to_csv(index=False)
+            st.download_button("📥 Download Results CSV", csv, "news_analysis_results.csv", "text/csv")
+else:
+    st.info("👆 Upload your CSV file to get started")
