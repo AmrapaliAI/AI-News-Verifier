@@ -14,7 +14,7 @@ import numpy as np
 # --- PAGE CONFIG ---
 st.set_page_config(
     page_title="AI News Verifier",
-    page_icon="🕵️",
+    page_icon="\U0001F575",  # Detective emoji via Unicode escape (U+1F575)
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -34,6 +34,7 @@ st.markdown("""
 .stApp { background: var(--bg-main); color: #f8fafc; }
 h1 { font-size: 3rem; font-weight: 900; text-align: center; }
 .metric-card { background: rgba(255,255,255,0.05); border-radius: 18px; padding: 1rem; }
+.subtitle { text-align:center; color:#cbd5e1; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -81,7 +82,7 @@ def load_or_train_model(uploaded_df=None):
     return tfidf_vectorizer, model, y_test, y_pred, acc, cm, True
 
 # --- MAIN APP ---
-st.title("🕵️ AI News Verifier")
+st.markdown("<h1>&#x1F575; AI News Verifier</h1>", unsafe_allow_html=True)
 st.markdown("<p class='subtitle'>Upload CSV files for intelligent fake news detection with visualizations</p>", unsafe_allow_html=True)
 
 # Sidebar
