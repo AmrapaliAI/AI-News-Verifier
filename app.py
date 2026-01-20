@@ -454,7 +454,7 @@ if batch_file is not None:
                     data=csv,
                     file_name="news_analysis_results.csv",
                     mime="text/csv",
-                    use_container_width=True
+                   width='stretch'
                 )
 
                 # Statistics
@@ -722,3 +722,4 @@ section[data-testid="stSidebar"] {
 
 </style>
 """, unsafe_allow_html=True)
+
