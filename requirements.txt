@@ -1,12 +1,3 @@
-System Requirements
-Python: 3.8 – 3.12 (your code shows Python 3.12, which is fine)
-
-OS: Windows, macOS, or Linux
-
-IDE/Editor: PyCharm, VS Code, or command line
-
-Python Packages
-
 streamlit
 pandas
 scikit-learn
