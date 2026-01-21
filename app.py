@@ -439,7 +439,7 @@ if batch_file is not None:
                         return 'background-color: #fef3c7; color: #92400e; font-weight: bold'
 
 
-                styled_df = batch_df.style.applymap(
+                styled_df = batch_df.style.map(
                     highlight_prediction,
                     subset=['Prediction']
                 )
@@ -722,3 +722,4 @@ section[data-testid="stSidebar"] {
 
 </style>
 """, unsafe_allow_html=True)
+
